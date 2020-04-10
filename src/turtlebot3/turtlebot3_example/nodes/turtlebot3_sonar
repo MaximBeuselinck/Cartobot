@@ -20,11 +20,13 @@
 import rospy
 from geometry_msgs.msg import Twist
 from turtlebot3_msgs.msg import SensorState
+from sensor_msgs.msg import Range
 
 class Sonar():
     def __init__(self):
         self.cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size = 1)
-        self.sonar_sub = rospy.Subscriber('sensor_state', SensorState, self.get_sonar, queue_size = 1)
+        self.sonar_sub = rospy.Subscriber('sonar', SensorState, self.get_sonar, queue_size = 1)
+        #self.sonar_sub = rospy.Subscriber('sensor_state', SensorState, self.get_sonar, queue_size = 1)
         self.sonar()
 
     def get_sonar(self, sensor):
@@ -35,6 +37,7 @@ class Sonar():
             linear_vel = 0.05
 
         twist.linear.x = linear_vel
+	rospy.loginfo('/scan : '+ rospy.get_caller_id() + 'I heard %s', twist)
         self.cmd_pub.publish(twist)
 
     def sonar(self):
