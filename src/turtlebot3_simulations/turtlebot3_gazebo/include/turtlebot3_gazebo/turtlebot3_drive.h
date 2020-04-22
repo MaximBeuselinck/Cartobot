@@ -62,6 +62,7 @@ class Turtlebot3Drive
 
   // ROS Topic Subscribers
   ros::Subscriber laser_scan_sub_;
+  ros::Subscriber sonar_sub_;
   ros::Subscriber odom_sub_;
 
   // Variables
@@ -77,6 +78,7 @@ class Turtlebot3Drive
   // Function prototypes
   void updatecommandVelocity(double linear, double angular);
   void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+  void sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
   void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
 };
 #endif // TURTLEBOT3_DRIVE_H_

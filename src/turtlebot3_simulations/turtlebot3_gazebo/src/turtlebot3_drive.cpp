@@ -53,6 +53,7 @@ bool Turtlebot3Drive::init()
 
   // initialize subscribers
   laser_scan_sub_  = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
+  sonar_sub_ = nh_.subscribe("sonar", 10, &Turtlebot3Drive::sonarMsgCallBack, this);
   odom_sub_ = nh_.subscribe("odom", 10, &Turtlebot3Drive::odomMsgCallBack, this);
 
   return true;
@@ -81,6 +82,21 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
       scan_data_[num] = msg->ranges.at(scan_angle[num]);
     }
   }
+}
+
+void Turtlebot3Drive:sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+{
+
+	uint16_t range_detect = 0.20
+	for (int num = 0; num < 3;i++)
+	{
+	 if (msg->range < range_detect)
+	 {
+	  printf("Range is overschreden : %d", range_detect[i]);
+	 }
+	}
+
+
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular)
