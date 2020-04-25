@@ -84,19 +84,14 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
   }
 }
 
-void Turtlebot3Drive:sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 {
 
-	uint16_t range_detect = 0.20
-	for (int num = 0; num < 3;i++)
+	uint16_t range_detect = 0.20;
+	if (msg->range < range_detect)
 	{
-	 if (msg->range < range_detect)
-	 {
-	  printf("Range is overschreden : %d", range_detect[i]);
-	 }
+	  printf("Range is overschreden : %lf", msg->range);
 	}
-
-
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular)
