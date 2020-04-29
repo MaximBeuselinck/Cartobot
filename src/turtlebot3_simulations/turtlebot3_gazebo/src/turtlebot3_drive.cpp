@@ -53,7 +53,7 @@ bool Turtlebot3Drive::init()
 
   // initialize publishers
   cmd_vel_pub_   = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
-  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 10);
+  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 1);
 
   // initialize subscribers
   laser_scan_sub_  = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
@@ -91,15 +91,17 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
 void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 {
 
-	uint16_t range_detect = 0.20;
+	float range_detect = 0.20;
 
  	// console.log(msg->range);
-	ROS_DEBUG("%lf", msg->range);
-	if (msg->range <= range_detect)
+
+	float data = msg->range;
+	if (data < 0.15)
 	{
-	  printf("Range is overschreden : %lf", msg->range );
+	 ROS_INFO("Range is overschreden : %lf", data);
+	 chatter_pub.publish(msg);
 	}
-	chatter_pub.publish(msg);
+
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular)
