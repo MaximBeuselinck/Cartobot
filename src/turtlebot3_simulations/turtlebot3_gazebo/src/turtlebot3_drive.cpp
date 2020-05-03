@@ -17,6 +17,8 @@
 /* Authors: Taehun Lim (Darby) */
 
 #include "turtlebot3_gazebo/turtlebot3_drive.h"
+#include <ros/console.h>
+
 
 Turtlebot3Drive::Turtlebot3Drive()
   : nh_priv_("~")
@@ -40,6 +42,7 @@ bool Turtlebot3Drive::init()
   // initialize ROS parameter
   std::string cmd_vel_topic_name = nh_.param<std::string>("cmd_vel_topic_name", "");
 
+
   // initialize variables
   escape_range_       = 30.0 * DEG2RAD;
   check_forward_dist_ = 0.7;
@@ -50,6 +53,7 @@ bool Turtlebot3Drive::init()
 
   // initialize publishers
   cmd_vel_pub_   = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
+  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 1);
 
   // initialize subscribers
   laser_scan_sub_  = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
@@ -84,18 +88,19 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
   }
 }
 
-void Turtlebot3Drive:sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 {
 
-	uint16_t range_detect = 0.20
-	for (int num = 0; num < 3;i++)
-	{
-	 if (msg->range < range_detect)
-	 {
-	  printf("Range is overschreden : %d", range_detect[i]);
-	 }
-	}
+	float range_detect = 0.20;
 
+ 	// console.log(msg->range);
+
+	float data = msg->range;
+	if (data < 0.15)
+	{
+	 ROS_INFO("Range is overschreden : %lf", data);
+	 chatter_pub.publish(msg);
+	}
 
 }
 
@@ -168,6 +173,7 @@ bool Turtlebot3Drive::controlLoop()
       break;
   }
 
+
   return true;
 }
 
@@ -183,7 +189,7 @@ int main(int argc, char* argv[])
 
   while (ros::ok())
   {
-    turtlebot3_drive.controlLoop();
+    //turtlebot3_drive.controlLoop();
     ros::spinOnce();
     loop_rate.sleep();
   }

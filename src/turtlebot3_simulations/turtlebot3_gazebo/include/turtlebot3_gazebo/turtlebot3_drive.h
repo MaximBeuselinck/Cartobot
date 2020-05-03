@@ -22,6 +22,7 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/Range.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
@@ -59,6 +60,7 @@ class Turtlebot3Drive
 
   // ROS Topic Publishers
   ros::Publisher cmd_vel_pub_;
+  ros::Publisher chatter_pub;
 
   // ROS Topic Subscribers
   ros::Subscriber laser_scan_sub_;
