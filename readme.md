@@ -50,7 +50,10 @@ rostopic echo /sonar
 
 ## Using the Python file to run the launch files
 -- open a new tab
+```
 cd catkin_ws
 source ./devel/setup.bash
 rosrun runtotal ArgumentLoop.py ~/catkin_ws/Map/map <time>
+```
+
 
