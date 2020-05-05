@@ -47,6 +47,8 @@ bool Turtlebot3Drive::init()
   escape_range_       = 30.0 * DEG2RAD;
   check_forward_dist_ = 0.7;
   check_side_dist_    = 0.6;
+  check_sonar_	= 15.0;
+
 
   tb3_pose_ = 0.0;
   prev_tb3_pose_ = 0.0;
@@ -96,6 +98,7 @@ void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
  	// console.log(msg->range);
 
 	float data = msg->range;
+	sonar_data_ = data;
 	if (data < 0.15)
 	{
 	 ROS_INFO("Range is overschreden : %lf", data);
@@ -147,6 +150,11 @@ bool Turtlebot3Drive::controlLoop()
         prev_tb3_pose_ = tb3_pose_;
         turtlebot3_state_num = TB3_RIGHT_TURN;
       }
+      /*if (sonar_data_ < check_sonar_)
+      {
+	prev_tb3_pose_ = tb3_pose_;
+        turtlebot3_state_num = TB3_RIGHT_TURN;
+      }*/
       break;
 
     case TB3_DRIVE_FORWARD:
@@ -189,7 +197,7 @@ int main(int argc, char* argv[])
 
   while (ros::ok())
   {
-    //turtlebot3_drive.controlLoop();
+    turtlebot3_drive.controlLoop();
     ros::spinOnce();
     loop_rate.sleep();
   }
