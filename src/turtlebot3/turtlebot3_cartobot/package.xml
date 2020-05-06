@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>turtlebot3_cartobot</name>
+  <version>1.2.3</version>
+  <description>
+    The turtlebot3_cartobot enables map making and navigation through an unknown room.
+  </description>
+  <license>Apache 2.0</license>
+    <author email="pyo@robotis.com">Pyo</author>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <author email="kkjong@robotis.com">Gilbert</author>
+  <author>Leon Jung - modified by cartobot</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>turtlebot3_bringup</exec_depend>
+</package>
