@@ -132,36 +132,36 @@
     </sensor>
   </gazebo>
 
-<gazebo reference="base_sonar_front">        
+<gazebo reference="base_sonar">        
    <sensor type="ray" name="TeraRanger">
       <pose>0 -10.5 0 0 0 0</pose>
       <visualize>true</visualize>
-      <update_rate>10</update_rate>
+      <update_rate>50</update_rate>
       <ray>
          <scan>
             <horizontal>
                <samples>10</samples>
-               <resolution>2</resolution> 
+               <resolution>5</resolution> 
                <min_angle>-0.25</min_angle>
                <max_angle>0.25</max_angle>
             </horizontal>
             <vertical>
                <samples>10</samples>
                <resolution>5</resolution> 
-               <min_angle>-0.25</min_angle>
-               <max_angle>-0.05</max_angle> 
+               <min_angle>-0.2</min_angle>
+               <max_angle>0</max_angle> 
             </vertical>
          </scan>
          <range>
             <min>0.05</min>
-            <max>3</max>
-            <resolution>1</resolution>
+            <max>2</max>
+            <resolution>1.5</resolution>
          </range>
       </ray>
       <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
          <gaussianNoise>0.005</gaussianNoise>
          <alwaysOn>true</alwaysOn>
-         <updateRate>5</updateRate>
+         <updateRate>50</updateRate>
          <topicName>sonar</topicName>
          <frameName>base_sonar</frameName>
          <radiation>ultrasound</radiation>

@@ -163,14 +163,14 @@
   </link>
 
 
- <joint name="sonar_front_joint" type="fixed">
+ <joint name="sonar_joint" type="fixed">
     <axis xyz="0 1 0" />
     <origin rpy="0 0 0" xyz="0.038 -0.022 0.06" />
     <parent link="base_footprint"/>
-    <child link="base_sonar_front"/>
+    <child link="base_sonar"/>
  </joint>
 
- <link name="base_sonar_front">
+ <link name="base_sonar">
    <visual>
       <origin xyz="0 0 0" rpy=" 1.5707 0 1.5707"/>
       <geometry>

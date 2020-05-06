@@ -71,10 +71,10 @@ class Turtlebot3Drive
   double escape_range_;
   double check_forward_dist_;
   double check_side_dist_;
-  double check_sonar_;
+  double check_sonar;
 
   double scan_data_[3] = {0.0, 0.0, 0.0};
-  double sonar_data_ = 30.0 ;
+  double sonar_data = 30.0 ;
 
   double tb3_pose_;
   double prev_tb3_pose_;
