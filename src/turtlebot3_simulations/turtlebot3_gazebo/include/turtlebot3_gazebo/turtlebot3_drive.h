@@ -22,6 +22,7 @@
 #include <ros/ros.h>
 
 #include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/Range.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 
@@ -59,17 +60,21 @@ class Turtlebot3Drive
 
   // ROS Topic Publishers
   ros::Publisher cmd_vel_pub_;
+  ros::Publisher chatter_pub;
 
   // ROS Topic Subscribers
   ros::Subscriber laser_scan_sub_;
+  ros::Subscriber sonar_sub_;
   ros::Subscriber odom_sub_;
 
   // Variables
   double escape_range_;
   double check_forward_dist_;
   double check_side_dist_;
+  double check_sonar_;
 
   double scan_data_[3] = {0.0, 0.0, 0.0};
+  double sonar_data_ = 30.0 ;
 
   double tb3_pose_;
   double prev_tb3_pose_;
@@ -77,6 +82,7 @@ class Turtlebot3Drive
   // Function prototypes
   void updatecommandVelocity(double linear, double angular);
   void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+  void sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
   void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
 };
 #endif // TURTLEBOT3_DRIVE_H_

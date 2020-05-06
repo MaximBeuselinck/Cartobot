@@ -17,6 +17,8 @@
 /* Authors: Taehun Lim (Darby) */
 
 #include "turtlebot3_gazebo/turtlebot3_drive.h"
+#include <ros/console.h>
+
 
 Turtlebot3Drive::Turtlebot3Drive()
   : nh_priv_("~")
@@ -40,19 +42,24 @@ bool Turtlebot3Drive::init()
   // initialize ROS parameter
   std::string cmd_vel_topic_name = nh_.param<std::string>("cmd_vel_topic_name", "");
 
+
   // initialize variables
   escape_range_       = 30.0 * DEG2RAD;
   check_forward_dist_ = 0.7;
   check_side_dist_    = 0.6;
+  check_sonar_	= 15.0;
+
 
   tb3_pose_ = 0.0;
   prev_tb3_pose_ = 0.0;
 
   // initialize publishers
   cmd_vel_pub_   = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
+  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 1);
 
   // initialize subscribers
   laser_scan_sub_  = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
+  sonar_sub_ = nh_.subscribe("sonar", 10, &Turtlebot3Drive::sonarMsgCallBack, this);
   odom_sub_ = nh_.subscribe("odom", 10, &Turtlebot3Drive::odomMsgCallBack, this);
 
   return true;
@@ -81,6 +88,23 @@ void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPt
       scan_data_[num] = msg->ranges.at(scan_angle[num]);
     }
   }
+}
+
+void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+{
+
+	float range_detect = 0.20;
+
+ 	// console.log(msg->range);
+
+	float data = msg->range;
+	sonar_data_ = data;
+	if (data < 0.15)
+	{
+	 ROS_INFO("Range is overschreden : %lf", data);
+	 chatter_pub.publish(msg);
+	}
+
 }
 
 void Turtlebot3Drive::updatecommandVelocity(double linear, double angular)
@@ -126,6 +150,11 @@ bool Turtlebot3Drive::controlLoop()
         prev_tb3_pose_ = tb3_pose_;
         turtlebot3_state_num = TB3_RIGHT_TURN;
       }
+      /*if (sonar_data_ < check_sonar_)
+      {
+	prev_tb3_pose_ = tb3_pose_;
+        turtlebot3_state_num = TB3_RIGHT_TURN;
+      }*/
       break;
 
     case TB3_DRIVE_FORWARD:
@@ -151,6 +180,7 @@ bool Turtlebot3Drive::controlLoop()
       turtlebot3_state_num = GET_TB3_DIRECTION;
       break;
   }
+
 
   return true;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="turtlebot3_burger_sim" xmlns:xacro="http://ros.org/wiki/xacro">
+  <robot name="turtlebot3_burger_sim" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:arg name="laser_visual" default="false"/>
   <xacro:arg name="imu_visual"   default="false"/>
 
@@ -131,5 +131,43 @@
       </plugin>
     </sensor>
   </gazebo>
+
+<gazebo reference="base_sonar_front">        
+   <sensor type="ray" name="TeraRanger">
+      <pose>0 -10.5 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+         <scan>
+            <horizontal>
+               <samples>10</samples>
+               <resolution>2</resolution> 
+               <min_angle>-0.25</min_angle>
+               <max_angle>0.25</max_angle>
+            </horizontal>
+            <vertical>
+               <samples>10</samples>
+               <resolution>5</resolution> 
+               <min_angle>-0.25</min_angle>
+               <max_angle>-0.05</max_angle> 
+            </vertical>
+         </scan>
+         <range>
+            <min>0.05</min>
+            <max>3</max>
+            <resolution>1</resolution>
+         </range>
+      </ray>
+      <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+         <gaussianNoise>0.005</gaussianNoise>
+         <alwaysOn>true</alwaysOn>
+         <updateRate>5</updateRate>
+         <topicName>sonar</topicName>
+         <frameName>base_sonar</frameName>
+         <radiation>ultrasound</radiation>
+         <fov>0.3</fov>
+      </plugin>
+   </sensor>  
+   </gazebo>
 
 </robot>
