@@ -18,6 +18,7 @@
 
 #include "turtlebot3_gazebo/turtlebot3_drive.h"
 #include <ros/console.h>
+#include <unistd.h>
 
 
 Turtlebot3Drive::Turtlebot3Drive()
@@ -45,9 +46,10 @@ bool Turtlebot3Drive::init()
 
   // initialize variables
   escape_range_       = 30.0 * DEG2RAD;
-  check_forward_dist_ = 0.7;
+  check_forward_dist_ = 0.7; 
   check_side_dist_    = 0.6;
-  check_sonar	= 0.2;
+  check_sonar	= 0.22;	// range var for detecing thresholds
+  sonar_drop	= 0.5;	// range var for detecing drops
 
 
   tb3_pose_ = 0.0;
@@ -55,7 +57,7 @@ bool Turtlebot3Drive::init()
 
   // initialize publishers
   cmd_vel_pub_   = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
-  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 1);
+  chatter_pub = nh_.advertise<sensor_msgs::Range>("SonarData", 5);
 
   // initialize subscribers
   laser_scan_sub_  = nh_.subscribe("scan", 10, &Turtlebot3Drive::laserScanMsgCallBack, this);
@@ -99,10 +101,15 @@ void Turtlebot3Drive::sonarMsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 
 	float data = msg->range;
 	sonar_data = data;
-	if (data < 0.2)
+	if (data < check_sonar)
 	{
 	 ROS_INFO("Range is overschreden : %lf", data);
 	 chatter_pub.publish(msg);
+	}
+	if (data > sonar_drop)
+	{
+	 ROS_INFO("Drop detected : %lf", data);
+	 //chatter_pub.publish(msg);
 	}
 
 }
@@ -127,7 +134,7 @@ bool Turtlebot3Drive::controlLoop()
   switch(turtlebot3_state_num)
   {
     case GET_TB3_DIRECTION:
-      if (sonar_data < check_sonar)
+      if (sonar_data < check_sonar || sonar_data > sonar_drop)
       {
 	prev_tb3_pose_ = tb3_pose_;
         turtlebot3_state_num = TB3_RIGHT_TURN;
@@ -151,13 +158,12 @@ bool Turtlebot3Drive::controlLoop()
           turtlebot3_state_num = TB3_DRIVE_FORWARD;
          }
        }
-      if (scan_data_[CENTER] < check_forward_dist_)
-      {
-        prev_tb3_pose_ = tb3_pose_;
-        turtlebot3_state_num = TB3_RIGHT_TURN;
-      }
+	if (scan_data_[CENTER] < check_forward_dist_)
+	{
+	prev_tb3_pose_ = tb3_pose_;
+	turtlebot3_state_num = TB3_RIGHT_TURN;
+	}
      }
-      
       break;
 
     case TB3_DRIVE_FORWARD:
